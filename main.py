@@ -8,20 +8,15 @@ from selenium.webdriver.common.by import By
 from time import sleep
 import time
 # NOTICE!
-# IMPORT CHROMEDRIVER IN THE SAME FOLDER
+# IMPORT CHROMEDRIVER IN THE SAME FOLDER AND COPY PATH
+PATH = "C:/Users/I355372/Documents/python/Facebook Bot/chromedriver.exe"
 class FacebookBot:
-    def __init__ (self, username, password):
+    def __init__(self,username, password):
         self.username=username
         self.password=password
-        option = Options()     
-        option.add_argument("--disable-infobars")
-        # option.add_argument("start-maximized")
-        option.add_argument("--disable-extensions")
-        # Pass the argument 1 to allow and 2 to block
-        option.add_experimental_option("prefs", { 
-            "profile.default_content_setting_values.notifications": 2 
-        })
-        driver = webdriver.Chrome(chrome_options=option)
+        
+    
+    def Login(self,driver):
         driver.get('https://www.facebook.com')
         print("Successfull Initiate...")
         user = driver.find_elements_by_xpath("//*[@id=\"email\"]")
@@ -30,57 +25,46 @@ class FacebookBot:
         psw[0].send_keys(self.password)
         psw[0].send_keys("\ue007")
         sleep(5)
-        #################################################
-        print("1. Delete/Hide all the messages")
-        print("2. Delete all post in facebook group")
-        choice = input ("What you want to do: ")   
-        if choice == '1':
-            print("Navigating to chat box")
-            driver.get("https://www.facebook.com/messages/t/")
-            wait = WebDriverWait(driver, 10)
-            actions = ActionChains(driver)
-            print("\n\nChatbox is here...")
-            while True:
-                try:
-                    driver.find_element_by_id("dots-3-horizontal").click()                    
-                    actions.send_keys(Keys.ARROW_DOWN *3, Keys.SPACE ).perform()
-                    actions.send_keys(Keys.TAB, Keys.SPACE).perform()
-                    sleep(5)
-                except:
-                    print("\nMessages deleted.")
-                    break
-            time.sleep(2)
-            driver.refresh()
-            time.sleep(3)
-            print("\n\nProcess complete. \nIf some messages aren't deleted, run the script again.\n")
-            sleep(5)
-
-        elif choice == '2':
-            print("Navigate to group")        
-            url = input("Enter URL to Group: ")
-            driver.get(url)
-            print("Navigating to Group: "+ url)
-            wait = WebDriverWait(driver, 10)
-            driver.execute_script("window.scrollTo(0, 1040)")
-            while True:
-                try:
-                    # btn = driver.find_element_by_class_name("_6a uiPopover _5pbi _cmw _1wbl _b1e openToggler selected")
-                    # for i in btn:
-                    #     i.click()
-                    # actions.send_keys(Keys.ARROW_DOWN *7, Keys.SPACE ).perform()
-                    # actions.send_keys(Keys.TAB, Keys.SPACE).perform()
-                    btn = driver.find_element_by_xpath("//*[@id=\"u_0_29\"]")
-                    btn.click()
-                    # wait = WebDriverWait(driver, 10)
-                    # wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button/span[.=\"Post\"]"))).click();
-                    sleep(5)
-                except:
-                    print("\nMessages deleted.")
-                    break
-            
-            sleep(5)
-
+    
+    def Quit(self,driver):
         print("Ending program")    
         driver.quit()
 
-FacebookBot("funfox2906@gmail.com","Duc2906@ELTE")
+    def DeleteMess(self,driver,actions):
+        print("Navigating to chat box")
+        driver.get("https://www.facebook.com/messages/t/")
+        WebDriverWait(driver, 10)
+        print("\n\nChatbox is here...")
+        cnt=0
+        while True:
+            try:
+                driver.find_element_by_id("dots-3-horizontal").click()                    
+                actions.send_keys(Keys.ARROW_DOWN *3, Keys.SPACE ).perform()
+                actions.send_keys(Keys.TAB, Keys.SPACE).perform()
+                cnt=cnt+1
+                sleep(5)
+            except:
+                print("\nMessages deleted: ",cnt)
+                break
+        time.sleep(2)
+        driver.refresh()
+        time.sleep(3)
+        print("\n\nProcess complete. \nIf some messages aren't deleted, run the script again.\n")
+        sleep(5)
+
+#######################-INITIATE BROWSER-##################################
+option = Options()     
+option.add_argument("--disable-infobars")
+option.add_argument("start-maximized")
+option.add_argument("--disable-extensions")
+option.add_experimental_option("prefs", { 
+    "profile.default_content_setting_values.notifications": 2 
+})
+driver = webdriver.Chrome(PATH,chrome_options=option)
+actions = ActionChains(driver)
+###########################################################################
+##                            MAIN                                       ##
+duc = FacebookBot("funfox2906@gmail.com","Duc2906@ELTE")
+duc.Login(driver)
+duc.DeleteMess(driver,actions)
+duc.Quit(driver)
