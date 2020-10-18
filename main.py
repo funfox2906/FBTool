@@ -64,7 +64,7 @@ driver = webdriver.Chrome(PATH,chrome_options=option)
 actions = ActionChains(driver)
 ###########################################################################
 ##                            MAIN                                       ##
-duc = FacebookBot("funfox2906@gmail.com","Duc2906@ELTE")
+duc = FacebookBot("id","pass")
 duc.Login(driver)
 duc.DeleteMess(driver,actions)
 duc.Quit(driver)
